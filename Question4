@@ -1,0 +1,92 @@
+#question 4
+import requests
+import json
+import csv
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+def download_data(url):
+    logging.warning("Downloading data from the URL: %s", url)
+    response = requests.get(url)
+    data = response.json()
+    logging.warning("Data downloaded successfully")
+    return data
+
+def convert_to_structured_data(data):
+    logging.warning("Converting data into a structured format")
+    structured_data = []
+    
+    for item in data:
+        # Extracting relevant attributes from the JSON data with error handling
+        name = item.get('name', '')
+        id = int(item.get('id', 0))
+        nametype = item.get('nametype', '')
+        recclass = item.get('recclass', '')
+        mass = float(item.get('mass', 0))
+        year = item.get('year', '')
+        reclat = float(item.get('reclat', 0))
+        reclong = float(item.get('reclong', 0))
+        coordinates = item.get('geolocation', {}).get('coordinates', [])
+        
+        # Creating a structured dictionary for each item
+        structured_item = {
+            'Name of Earth Meteorite': name,
+            'id': id,
+            'nametype': nametype,
+            'recclass': recclass,
+            'mass': mass,
+            'year': year,
+            'reclat': reclat,
+            'reclong': reclong,
+            'point coordinates': coordinates
+        }
+        
+        structured_data.append(structured_item)
+    
+    logging.warning("Data converted to a structured format")
+    return structured_data
+
+def export_to_csv(data, file_name):
+    logging.warning("Exporting data to CSV file: %s", file_name)
+    with open(file_name, 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = data[0].keys()
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        writer.writeheader()
+        writer.writerows(data)
+    
+    logging.warning("Data exported to %s", file_name)
+
+def main():
+    url = "https://data.nasa.gov/resource/y77d-th95.json"
+    file_name = "meteorite_data.csv"
+    
+    # Download data
+    data = download_data(url)
+    
+    # Convert data to a structured format
+    structured_data = convert_to_structured_data(data)
+    
+    # Export data to CSV
+    export_to_csv(structured_data, file_name)
+    
+    logging.warning("Program execution completed")
+
+if __name__ == '__main__':
+    main()
+
+
+import pandas as pd
+def display_csv(file_name):
+    # Read the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_name)
+    
+    # Display the DataFrame
+    print(df.to_string(index=False))
+
+# Assuming the CSV file is named 'meteorite_data.csv'
+display_csv('meteorite_data.csv')
+
+

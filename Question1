@@ -1,0 +1,18 @@
+#question1
+def func(s):
+    word_frequency = {}
+    words = s.split()
+    
+    for word in words:
+        if word in word_frequency:
+            word_frequency[word] += 1
+        else:
+            word_frequency[word] = 1
+    
+    max_frequency = max(word_frequency.values())
+    
+    for word, frequency in word_frequency.items():
+        if frequency == max_frequency:
+            return len(word)
+s = "write write write all the number from from from 1 to 100"
+print(func(s))

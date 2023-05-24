@@ -50,3 +50,4 @@ inputs = [
 ]
 for s in inputs:
     print(valid_string(s))
+    

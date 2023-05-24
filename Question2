@@ -1,0 +1,52 @@
+#question 2
+def valid_string(s):
+    char_frequency = {}  # Initialize an empty dictionary to store character frequencies
+    
+    # Count the frequency of each character in the string
+    for char in s:
+        if char in char_frequency:
+            char_frequency[char] += 1
+        else:
+            char_frequency[char] = 1
+    
+    # Check if all characters have the same frequency
+    frequencies = list(char_frequency.values())  # Get a list of all frequencies
+    if all(freq == frequencies[0] for freq in frequencies): #if freq of first character == freq of the rest
+        return "YES"  # Valid string: all characters have the same frequency
+    
+    # Check if removing one character makes the remaining characters have the same frequency
+    for char in char_frequency:
+        char_frequency[s[0]] -= 1  # Decrease the frequency of the current character by 1
+        remaining_frequencies = list(char_frequency.values())  # Get a list of remaining frequencies
+        
+        if all(freq == remaining_frequencies[0] for freq in remaining_frequencies) and len(set(remaining_frequencies)) == 1:
+            return "YES"  # Valid string after removing one character
+        
+        char_frequency[char] += 1  # Restore the frequency of the current character
+    
+    return "NO"  # Invalid string: unable to make all characters have the same frequency
+
+
+
+# Example test cases
+inputs = [
+    "abc",
+    "abcc"
+]
+
+for s in inputs:
+    print(valid_string(s))
+
+
+
+# Additional test cases
+inputs = [
+    "aabbcc",
+    "aabbccd",
+    "aabbbcc",
+    "aabbccdd",
+    "abcd",
+    "aabbccdd"
+]
+for s in inputs:
+    print(valid_string(s))

@@ -1,0 +1,59 @@
+#question 5
+import requests
+import json
+
+def download_data(url):
+    response = requests.get(url)
+    data = json.loads(response.text)
+    return data
+
+def extract_data(data):
+    episode_id = data['id']
+    episode_url = data['url']
+    episode_name = data['name']
+    season = data.get('season')
+    episode_number = data.get('number')
+    episode_type = data.get('type')
+    airdate = data.get('airdate')
+    airtime = data.get('airtime')
+    runtime = data.get('runtime')
+    average_rating = data['rating']['average']
+    summary = data.get('summary', '').replace('<p>', '').replace('</p>', '')
+    image_medium = data['image']['medium']
+    image_original = data['image']['original']
+
+    formatted_data = {
+        'id': episode_id,
+        'url': episode_url,
+        'name': episode_name,
+        'season': season,
+        'number': episode_number,
+        'type': episode_type,
+        'airdate': airdate,
+        'airtime': airtime,
+        'runtime': runtime,
+        'rating': average_rating,
+        'summary': summary,
+        'image_medium': image_medium,
+        'image_original': image_original
+    }
+
+    return formatted_data
+
+def main():
+    # API URL
+    url = "http://api.tvmaze.com/singlesearch/shows?q=westworld&embed=episodes"
+    
+    # Download data from the API
+    data = download_data(url)
+    
+    # Extract and format the data
+    formatted_data = extract_data(data)
+    
+    # Display the extracted and formatted data
+    for key, value in formatted_data.items():
+        print(f"{key}: {value}")
+
+if __name__ == "__main__":
+    main()
+

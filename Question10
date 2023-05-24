@@ -1,0 +1,59 @@
+#question 10
+import spacy
+
+def count_pos_tags(text):
+    # Load the English language model in spaCy
+    nlp = spacy.load('en_core_web_sm')
+
+    # Process the text using the spaCy pipeline
+    doc = nlp(text)
+
+    # Initialize count variables
+    noun_count = 0
+    pronoun_count = 0
+    verb_count = 0
+    adjective_count = 0
+
+    # Iterate over each token in the document
+    for token in doc:
+        # Check the part-of-speech tag of the token
+        if token.pos_ == 'NOUN':
+            noun_count += 1
+        elif token.pos_ == 'PRON':
+            pronoun_count += 1
+        elif token.pos_ == 'VERB':
+            verb_count += 1
+        elif token.pos_ == 'ADJ':
+            adjective_count += 1
+
+    # Create a dictionary with the counts
+    pos_counts = {
+        'nouns': noun_count,
+        'pronouns': pronoun_count,
+        'verbs': verb_count,
+        'adjectives': adjective_count
+    }
+
+    return pos_counts
+
+# Test case 1
+text1 = "The quick brown fox jumps over the lazy dog."
+# Explanation: This sentence contains 1 noun, 1 verb, and 3 adjectives.
+
+# Test case 2
+text2 = "She sells seashells by the seashore."
+# Explanation: This sentence contains 2 nouns, 1 pronoun, and 1 verb.
+
+# Test case 3 (additional test case)
+text3 = "I am running in the park."
+# Explanation: This sentence contains 1 noun, 1 pronoun, and 1 verb.
+
+# Call the function for each test case
+result1 = count_pos_tags(text1)
+result2 = count_pos_tags(text2)
+result3 = count_pos_tags(text3)
+
+# Print the results
+print("Test case 1:", result1)
+print("Test case 2:", result2)
+print("Test case 3:", result3)

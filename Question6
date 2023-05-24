@@ -1,0 +1,121 @@
+#question 6
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Read the structured data from the Excel file
+data = pd.read_excel("pokemon_data.xlsx")
+
+# Get all Pokemons whose spawn rate is less than 5%
+spawn_rate_less_than_5 = data[data['spawn_chance'] < 5]
+
+# Get all Pokemons that have less than 4 weaknesses
+less_than_4_weaknesses = data[data['weakness'].str.count(',') < 3]
+
+# Get all Pokemons that have no multipliers at all
+no_multipliers = data[data['multipliers'].isnull()]
+
+# Get all Pokemons that do not have more than 2 evolutions
+less_than_2_evolutions = data[data['next_evolution'].str.count(',') < 2]
+
+# Convert spawn time to seconds
+data['spawn_time_seconds'] = pd.to_datetime(data['spawn_time'], format='%M:%S').dt.minute * 60 + pd.to_datetime(data['spawn_time'], format='%M:%S').dt.second
+
+# Get all Pokemons whose spawn time is less than 300 seconds
+spawn_time_less_than_300 = data[data['spawn_time_seconds'] < 300]
+
+# Get all Pokemon who have more than two types of capabilities
+more_than_2_types = data[data['type'].str.count(',') > 1]
+
+# Plotting the analysis
+
+# Bar plot for spawn rate less than 5%
+plt.figure(figsize=(40, 20))
+plt.bar(spawn_rate_less_than_5['name'], spawn_rate_less_than_5['spawn_chance'])
+plt.xlabel('Pokemon')
+plt.ylabel('Spawn Rate')
+plt.title('Pokemons with Spawn Rate Less Than 5%')
+plt.xticks(rotation=90)
+plt.show()
+print("")
+
+# Bar plot for Pokemons with less than 4 weaknesses
+plt.figure(figsize=(40, 10))
+plt.bar(less_than_4_weaknesses['name'], less_than_4_weaknesses['weakness'].str.count(',') + 1)
+plt.xlabel('Pokemon')
+plt.ylabel('Number of Weaknesses')
+plt.title('Pokemons with Less Than 4 Weaknesses')
+plt.xticks(rotation=90)
+plt.show()
+print("")
+
+
+# Bar plot for Pokemons with no multipliers
+plt.figure(figsize=(40, 10))
+plt.bar(no_multipliers['name'], 0)
+plt.xlabel('Pokemon')
+plt.title('Pokemons with No Multipliers')
+plt.xticks(rotation=90)
+plt.yticks([])
+plt.show()
+# Filter Pokemons with no multipliers
+filtered_data = data[data['multipliers'] == '']
+# Get the count of Pokemons with no multipliers
+count = len(filtered_data)
+# Print the count
+print("Number of Pokemons with No Multipliers:", count)
+print("")
+
+# Bar plot for Pokemons with less than 2 evolutions
+plt.figure(figsize=(40, 10))
+plt.bar(less_than_2_evolutions['name'], less_than_2_evolutions['next_evolution'].str.count(',') + 1)
+plt.xlabel('Pokemon')
+plt.ylabel('Number of Evolutions')
+plt.title('Pokemons with Less Than 2 Evolutions')
+plt.xticks(rotation=90)
+plt.show()
+print("")
+
+# Bar plot for Pokemons with spawn time less than 300 seconds
+plt.figure(figsize=(40, 10))
+plt.bar(spawn_time_less_than_300['name'], spawn_time_less_than_300['spawn_time_seconds'])
+plt.xlabel('Pokemon')
+plt.ylabel('Spawn Time (seconds)')
+plt.title('Pokemons with Spawn Time Less Than 300 seconds')
+plt.xticks(rotation=90)
+plt.show()
+print("")
+
+#f
+print("f: To Get all Pokemon who have more than two types of capabilities")
+print("------------------------------------------------------------------------------------------------------------------------------------------")
+def get_pokemon_with_multiple_abilities():
+    # Read the Excel file into a pandas DataFrame
+    df = pd.read_excel('pokemon_data.xlsx')
+    
+    # Create a new column to count the number of abilities for each Pokémon
+    df['type'] = df['type'].apply(lambda x: len(x.split(', ')))
+    
+    # Filter the DataFrame to include only the Pokémon with more than two abilities
+    filtered_df = df[df['type'] > 2]
+    
+    # Get the names of the Pokémon with multiple abilities
+    pokemon_names = filtered_df['name'].tolist()
+    
+    return pokemon_names
+
+# Call the function to get the Pokémon with multiple abilities
+pokemon_list = get_pokemon_with_multiple_abilities()
+
+# Print the list of Pokémon with multiple abilities
+print(pokemon_list)
+if pokemon_list == []:
+  print("NO such Pokemon who have more than two types of capabilities")
+
+# Create a bar plot for the count of Pokémon with multiple abilities
+plt.bar(['Pokémon'], [len(pokemon_list)])
+plt.xlabel('Number of Abilities')
+plt.ylabel('Count')
+plt.title('Pokémon with Multiple Abilities')
+plt.show()
+
+

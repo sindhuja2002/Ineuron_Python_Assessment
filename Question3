@@ -55,12 +55,10 @@ def main():
     logging.info("Downloading dataset from the link...")
     data = download_data(url)
     logging.info("Dataset downloaded successfully.")
-    
-    # Convert data to a structured format
     logging.info("Converting data into a structured format...")
     #structured_data = convert_to_structured_data(data)
-    # Function to convert the JSON data to a structured format
     
+#To handle NoneType
 def convert_to_structured_data(data):
     structured_data = []
 
@@ -104,6 +102,7 @@ def convert_to_structured_data(data):
 # Run the main function
 if __name__ == '__main__':
     main()
+
 
 
 # Main function

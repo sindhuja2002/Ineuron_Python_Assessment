@@ -65,6 +65,39 @@ filtered_cars_data = pd.read_csv('filtered_cars.csv')
 print("filtered_cars.csv file created successfully")
 print("-------------------------------------------------------------------------------------------------------------")
 
+#d
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Read the data from the CSV file
+data = pd.read_csv('https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD')
+print("d: To Draw plots to show the distribution between city and electric vehicle type ")
+ 
+
+# Convert numeric columns to strings
+data['City'] = data['City'].astype(str)
+data['Electric Vehicle Type'] = data['Electric Vehicle Type'].astype(str)
+
+# Set up the figure and axes
+fig, ax = plt.subplots(figsize=(400, 400))
+
+# Plot the distribution between city and electric vehicle type using a countplot
+sns.countplot(data=data, x='City', hue='Electric Vehicle Type', ax=ax)
+
+# Set the labels and title
+ax.set_xlabel('City')
+ax.set_ylabel('Count')
+ax.set_title('Distribution of Electric Vehicle Types by City')
+
+# Rotate the x-axis labels for better visibility to avoid names overlapping each other
+plt.xticks(rotation=45)
+
+# Display the plot
+plt.tight_layout()
+plt.show()
+
+
 
 
 

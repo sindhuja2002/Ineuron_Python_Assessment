@@ -1,0 +1,87 @@
+#question 7
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the CSV file into a pandas DataFrame
+df = pd.read_csv('meteorite_data.csv')
+
+# Convert the 'year' column to datetime
+df['year'] = pd.to_datetime(df['year'], errors='coerce')
+
+# Get all the Earth meteorites that fell before the year 2000
+earth_meteorites_before_2000 = df[df['year'] < '2000-01-01']
+
+# Get all the Earth meteorites' coordinates that fell before the year 1970
+earth_meteorites_before_1970= df[df['year'] < '1970-01-01'][['reclat', 'reclong']]
+
+# Get all the Earth meteorites with a mass greater than 10000 kg
+earth_meteorites_greater_than_10000kg = df[df['mass'] > 10000]
+
+# Plotting the analysis
+
+# Histogram of meteorite masses
+plt.hist(df['mass'], bins=50)
+plt.xlabel('Mass (kg)')
+plt.ylabel('Frequency')
+plt.title('Distribution of Meteorite Masses')
+plt.show()
+print()
+
+# Scatter plot of meteorite coordinates
+plt.scatter(df['reclong'], df['reclat'], s=10)
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.title('Meteorite Fall Locations')
+plt.show()
+print("")
+
+#2
+#a
+# Count the number of Earth meteorites by year
+meteorite_counts = earth_meteorites_before_2000['year'].dt.year.value_counts().sort_index()
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(100, 50))
+meteorite_counts.plot(kind='bar', ax=ax)
+ax.set_xlabel('Year')
+ax.set_ylabel('Number of Meteorites')
+ax.set_title('Earth Meteorites that Fell Before 2000')
+plt.show()
+print("To Get all the Earth meteorites that fell before the year 2000")
+print()
+
+#b
+# Filter the DataFrame to include only Earth meteorites that fell before the year 1970
+earth_meteorites_before_1970 = df[df['year'] < '1970-01-01']
+# Count the occurrences of each unique coordinate pair
+coordinates_count = earth_meteorites_before_1970['point coordinates'].value_counts()
+# Create a figure and axes object for the plot
+fig, ax = plt.subplots(figsize=(400, 400))
+# Plot a bar chart using the coordinate count data
+coordinates_count.plot(kind='bar', ax=ax)
+# Set the plot title
+ax.set_title('Coordinates of Earth Meteorites Before 1970')
+# Set the x-axis label
+plt.xlabel('Coordinate Pair')
+# Set the y-axis label
+plt.ylabel('Count')
+# Display the plot
+plt.show()
+print("To Get all the earth meteorites co-ordinates who fell before the year 1970")
+
+#c
+# Filter the DataFrame to include only Earth meteorites with a mass greater than 10000 kg
+earth_meteorites_greater_than_10000kg = df[df['mass'] > 10000]
+# Count the occurrences of each unique mass category
+mass_count = earth_meteorites_greater_than_10000kg['mass'].value_counts()
+# Sort the mass categories in descending order
+mass_count = mass_count.sort_index(ascending=False)
+# Create a figure and axes object for the plot
+fig, ax = plt.subplots(figsize=(40, 20))
+# Plot a bar chart using the mass count data
+mass_count.plot(kind='bar', ax=ax)
+ax.set_title('Earth Meteorites with Mass > 10000 kg')
+plt.xlabel('Mass (kg)')
+plt.ylabel('Count')
+plt.show()
+print("By assuming that the mass of the earth meteorites was in kg, get all those whose mass was more than 10000kg")

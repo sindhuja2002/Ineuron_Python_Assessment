@@ -1,0 +1,253 @@
+#question 8
+import requests
+import json
+
+# Function to download data from the API
+def download_data(url):
+    response = requests.get(url)
+    data = json.loads(response.text)
+    return data
+
+# Function to extract and format the data
+def extract_data(data):
+    # Extract relevant information from the data
+    episode_id = data['id']
+    episode_url = data['url']
+    episode_name = data['name']
+    season = data.get('season')
+    episode_number = data.get('number')
+    episode_type = data.get('type')
+    airdate = data.get('airdate')
+    airtime = data.get('airtime')
+    runtime = data.get('runtime')
+    average_rating = data['rating']['average']
+    summary = data.get('summary', '').replace('<p>', '').replace('</p>', '')
+    image_medium = data['image']['medium']
+    image_original = data['image']['original']
+
+    # Format the extracted data into a dictionary
+    formatted_data = {
+        'id': episode_id,
+        'url': episode_url,
+        'name': episode_name,
+        'season': season,
+        'number': episode_number,
+        'type': episode_type,
+        'airdate': airdate,
+        'airtime': airtime,
+        'runtime': runtime,
+        'rating': average_rating,
+        'summary': summary,
+        'image_medium': image_medium,
+        'image_original': image_original
+    }
+
+    return formatted_data
+
+def main():
+    # API URL
+    url = "http://api.tvmaze.com/singlesearch/shows?q=westworld&embed=episodes"
+    
+    # Download data from the API
+    data = download_data(url)
+    
+    # Extract and format the data
+    formatted_data = extract_data(data)
+    
+    # Display the extracted and formatted data
+    for key, value in formatted_data.items():
+        print(f"{key}: {value}")
+
+    # Count the number of seasons
+    seasons = set()
+    episodes_data = data.get('_embedded', {}).get('episodes', [])
+    for episode in episodes_data:
+        season = episode.get('season')
+        if season:
+            seasons.add(season)
+
+    num_seasons = len(seasons)
+    print("")
+    print("------------------------------------")
+    print(f"Number of seasons: {num_seasons}")
+    print("------------------------------------")
+
+if __name__ == "__main__":
+    main()
+
+
+import requests
+import matplotlib.pyplot as plt
+
+def download_data(url):
+    response = requests.get(url)
+    data = response.json()
+    return data
+#a
+def extract_ratings(data):
+    ratings = {}
+    episodes = data.get('_embedded', {}).get('episodes', [])
+    for episode in episodes:
+        season = episode.get('season')
+        rating = episode.get('rating', {}).get('average')
+        if season and rating:
+            if season in ratings:
+                ratings[season].append(rating)
+            else:
+                ratings[season] = [rating]
+    return ratings
+
+def plot_season_ratings(ratings):
+    seasons = sorted(ratings.keys())
+    avg_ratings = [sum(ratings[season]) / len(ratings[season]) for season in seasons]
+
+    #plt.bar(seasons, avg_ratings)
+    plt.plot(seasons, avg_ratings,marker='o')
+
+    plt.xlabel('Season')
+    plt.ylabel('Average Rating')
+    plt.title('Overall Ratings for Each Season')
+    plt.show()
+    
+
+#b
+def extract_highly_rated_episodes(data):
+    episodes = data.get('_embedded', {}).get('episodes', [])
+    highly_rated_episodes = {}
+    for episode in episodes:
+        season = episode.get('season')
+        rating = episode.get('rating', {}).get('average')
+        name = episode.get('name')
+        if season and rating and rating > 8:
+            if season in highly_rated_episodes:
+                highly_rated_episodes[season].append(name)
+            else:
+                highly_rated_episodes[season] = [name]
+    return highly_rated_episodes
+   
+#c
+def extract_episodes_before_date(data, target_date):
+    episodes = data.get('_embedded', {}).get('episodes', [])
+    episodes_before_date = []
+    for episode in episodes:
+        airdate = episode.get('airdate')
+        name = episode.get('name')
+        if airdate and airdate < target_date:
+            episodes_before_date.append(name)
+    return episodes_before_date
+
+#d
+def extract_episodes_by_season(data):
+    episodes = data.get('_embedded', {}).get('episodes', [])
+    episodes_by_season = {}
+    for episode in episodes:
+        season = episode.get('season')
+        name = episode.get('name')
+        rating = episode.get('rating', {}).get('average')
+        if season:
+            if season not in episodes_by_season:
+                episodes_by_season[season] = {'highest': (name, rating), 'lowest': (name, rating)}
+            else:
+                current_highest = episodes_by_season[season]['highest']
+                current_lowest = episodes_by_season[season]['lowest']
+                if rating and rating > current_highest[1]:
+                    episodes_by_season[season]['highest'] = (name, rating)
+                if rating and rating < current_lowest[1]:
+                    episodes_by_season[season]['lowest'] = (name, rating)
+    return episodes_by_season
+
+
+#e
+def get_summary_most_popular_episode(data):
+    episodes = data.get('_embedded', {}).get('episodes', [])
+    most_popular_episodes_summary = {}
+    for episode in episodes:
+        season = episode.get('season')
+        rating = episode.get('rating', {}).get('average')
+        if season:
+            if season not in most_popular_episodes_summary:
+                most_popular_episodes_summary[season] = {
+                    'name': episode.get('name'),
+                    'rating': rating,
+                    'summary': episode.get('summary')
+                }
+            else:
+                if rating and rating > most_popular_episodes_summary[season]['rating']:
+                    most_popular_episodes_summary[season] = {
+                        'name': episode.get('name'),
+                        'rating': rating,
+                        'summary': episode.get('summary')
+                    }
+    return most_popular_episodes_summary
+
+
+
+
+
+def main():
+    url = "http://api.tvmaze.com/singlesearch/shows?q=westworld&embed=episodes"
+    data = download_data(url)
+
+    
+
+
+    #a
+    print("a: To Get all the overall ratings for each season and using plots compare the ratings for all the seasons, like season 1 ratings, season 2, and so on.")
+    print("-------------------------------------------------------------------------------------------------------------------------------------------------------")
+    ratings = extract_ratings(data)
+    plot_season_ratings(ratings)
+    print()
+    print()
+
+    #b
+    print("b: To Get all the episode names, whose average rating is more than 8 for every season")
+    print("-------------------------------------------------------------------------------------")
+    highly_rated_episodes = extract_highly_rated_episodes(data)
+
+    for season, episodes in highly_rated_episodes.items():
+        print(f"Season {season} highly rated episodes:")
+        for episode in episodes:
+            print(f"- {episode}")
+    print()
+    print()
+
+
+    #c
+    print("c: To Get all the episode names that aired before May 2019")
+    print("--------------------------------------------------------------")
+    target_date = "2019-05-01"
+    episodes_before_date = extract_episodes_before_date(data, target_date)
+
+    print("Episodes aired before May 2019:")
+    for episode in episodes_before_date:
+        print("- " + episode)
+    print()
+    print()
+
+    #d
+    episodes_by_season = extract_episodes_by_season(data)
+
+    print("d: Episode names from each season with the highest and lowest ratings:")
+    print("-------------------------------------------------------------------------")
+    for season, episodes in episodes_by_season.items():
+        print(f"Season {season}:")
+        print(f"Highest Rating: Episode {episodes['highest'][0]} (Rating: {episodes['highest'][1]})")
+        print(f"Lowest Rating: Episode {episodes['lowest'][0]} (Rating: {episodes['lowest'][1]})")
+        print()
+        print()
+
+
+    #e
+    most_popular_episodes_summary = get_summary_most_popular_episode(data)
+
+    print("e: Summary for the most popular episode in every season:")
+    print("------------------------------------------------------")
+    for season, episode in most_popular_episodes_summary.items():
+        print(f"Season {season}:")
+        print(f"Episode: {episode['name']}")
+        print(f"Rating: {episode['rating']}")
+        print(f"Summary: {episode['summary']}")
+        print()
+
+if __name__ == "__main__":
+    main()

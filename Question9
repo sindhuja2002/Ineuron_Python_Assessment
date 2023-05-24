@@ -1,0 +1,70 @@
+#question9
+import pandas as pd
+
+# Read the data from the CSV file
+data_url = "https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD"
+df = pd.read_csv(data_url)
+
+# Display the available column names
+print("Column Names:")
+print(df.columns)
+print()
+print("------------------------------------------------------------------------------------------------")
+print("a: To  Get all the cars and their types that do not qualify for clean alternative fuel vehicle ,")
+print("YOU NEED OUTPUT IN CONSOLE OR AS CSV FILE")
+print("CONSOLE  : TYPE 'a' ")
+print("CSV FILE : TYPE 'b' ")
+got_input=input()
+print()
+if got_input=='a':
+
+  #a
+  # Enter the column name for clean alternative fuel vehicle
+  print("""COPY PASTE 'Clean Alternative Fuel Vehicle (CAFV) Eligibility' in input""")
+  print()
+  clean_vehicle_type_column = input("Enter the column name for clean alternative fuel vehicle: ")
+  # Get all the cars and their types that do not qualify for clean alternative fuel vehicle
+  non_qualifying_cars = df.loc[df[clean_vehicle_type_column] != 'YES', ['Make', 'Model', clean_vehicle_type_column]]
+  # Display the result
+  print("Cars and their types that do not qualify for clean alternative fuel vehicle:")
+  print(non_qualifying_cars)
+
+else:
+
+  #a is displayed in csv
+  # Enter the column name for clean alternative fuel vehicle
+  clean_vehicle_type_column = input("Enter the column name for clean alternative fuel vehicle: ")
+  print()
+  # Get all the cars and their types that do not qualify for clean alternative fuel vehicle
+  non_qualifying_cars = df.loc[df[clean_vehicle_type_column] != 'YES', ['Make', 'Model', clean_vehicle_type_column]]
+  # Save the non-qualifying cars to a CSV file
+  non_qualifying_cars.to_csv("non_qualifying_cars.csv", index=False)
+  print("non_qualifying_cars.csv file created successfully")
+print("-------------------------------------------------------------------------------------------------------------")  
+print()
+
+#b
+print("b: To Get all TESLA cars with the model year, and model type made in Bothell City")
+# Filter the dataframe to include only TESLA cars made in Bothell City
+tesla_cars = df.loc[(df['Make'] == 'TESLA') & (df['City'] == 'BOTHELL'), ['Model Year', 'Model']]
+# Print the TESLA cars with the model year and model type made in Bothell City
+print(tesla_cars)
+print("-------------------------------------------------------------------------------------------------------------")
+print()
+
+
+#c
+print("c: To Get all the cars that have an electric range of more than 100, and were made after 2015 ")
+print()
+# Filter the data for cars with electric range > 100 and made after 2015
+filtered_cars = df[(df['Electric Range'] > 100) & (df['Model Year'] > 2015)]
+# Save the filtered cars to a new CSV file
+filtered_cars.to_csv('filtered_cars.csv', index=False)
+# Read the filtered cars from the CSV file
+filtered_cars_data = pd.read_csv('filtered_cars.csv')
+print("filtered_cars.csv file created successfully")
+print("-------------------------------------------------------------------------------------------------------------")
+
+
+
+
